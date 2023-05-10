@@ -182,7 +182,7 @@ public class UserRepository {
     public boolean validateCredentials(String username, String password) {
         String hash = Optional.ofNullable(doQuery(queryConfigurations.getFindPasswordHash(), null, this::readString, username)).orElse("");
         if (queryConfigurations.isBlowfish()) {
-            return !hash.isEmpty() && BCrypt.checkpw(password, hash);
+            return !hash.isEmpty() && BCrypt.verifyer().verify(password.toCharArray(), hash).verified;
         } else if (queryConfigurations.isArgon2()) {
             return !hash.isEmpty() && ARGON2.get(ARGON2TYPES.get(queryConfigurations.getHashFunction())).verify(hash, password.toCharArray());
         } else {
